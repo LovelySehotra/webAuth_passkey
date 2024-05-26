@@ -1,5 +1,6 @@
 import express from "express";
 import crypto from "crypto"
+import cors from 'cors';
 import {generateRegistrationOptions, 
     verifyRegistrationResponse, 
     generateAuthenticationOptions, 
@@ -11,7 +12,7 @@ if (!globalThis.crypto) {
 }
 const PORT =3000;
 const app = express()
-
+app.use(cors());
 app.use(express.static('./public'))
 app.use(express.json())
 
@@ -21,6 +22,7 @@ const loginStore ={}
 
 app.post('/register',(req,res)=>{
     const {username,password} =req.body;
+    console.log("l")
     const id = `user${Date.now()}`;
     const user ={
         id,
@@ -61,7 +63,7 @@ app.post('/register-verify', async (req, res) => {
 
     const verificationResult = await verifyRegistrationResponse({
         expectedChallenge: challenge,
-        expectedOrigin: 'http://localhost:3000',
+        expectedOrigin: 'http://localhost:5500',
         expectedRPID: 'localhost',
         response: cred,
     })
@@ -93,7 +95,7 @@ app.post('/login-verify', async (req, res) => {
 
     const result = await verifyAuthenticationResponse({
         expectedChallenge: challenge,
-        expectedOrigin: 'http://localhost:3000',
+        expectedOrigin: 'http://localhost:5500',
         expectedRPID: 'localhost',
         response: cred,
         authenticator: user.passkey
